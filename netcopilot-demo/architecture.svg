@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1180" height="560" viewBox="0 0 1180 560" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#334155"/>
+    </marker>
+    <style>
+      .box { fill:#ffffff; stroke:#334155; stroke-width:2; rx:10; }
+      .title { font-size:15px; font-weight:700; fill:#0f172a; }
+      .sub { font-size:11px; fill:#475569; }
+      .phase { font-size:11px; font-weight:700; fill:#2563eb; }
+      .flow { stroke:#334155; stroke-width:2; fill:none; marker-end:url(#arrow); }
+      .pred { stroke:#16a34a; stroke-width:3; fill:none; marker-end:url(#arrow); }
+    </style>
+  </defs>
+
+  <!-- Air-gap boundary -->
+  <rect x="20" y="58" width="1140" height="430" rx="16" fill="#f8fafc" stroke="#dc2626" stroke-width="2.5" stroke-dasharray="10 6"/>
+  <text x="40" y="84" font-size="14" font-weight="700" fill="#dc2626">AIR-GAP BOUNDARY — zero outbound traffic (verifiable with a packet monitor)</text>
+
+  <!-- Title -->
+  <text x="20" y="36" font-size="22" font-weight="800" fill="#0f172a">Offline Predictive Network Copilot — Architecture</text>
+
+  <!-- Stage 1: Network Simulation -->
+  <rect class="box" x="44" y="150" width="190" height="120" rx="10"/>
+  <text class="phase" x="60" y="172">PHASE 1</text>
+  <text class="title" x="60" y="194">Network Simulation</text>
+  <text class="sub" x="60" y="216">Containerlab + FRR</text>
+  <text class="sub" x="60" y="232">MPLS / BGP / OSPF, VRFs</text>
+  <text class="sub" x="60" y="248">Fault injection (tc netem)</text>
+  <text class="sub" x="60" y="264">+ synthetic generator</text>
+
+  <!-- Stage 2: Telemetry -->
+  <rect class="box" x="268" y="150" width="190" height="120" rx="10"/>
+  <text class="phase" x="284" y="172">PHASE 2</text>
+  <text class="title" x="284" y="194">Telemetry Pipeline</text>
+  <text class="sub" x="284" y="216">SNMP / syslog / flow</text>
+  <text class="sub" x="284" y="232">Time-series store</text>
+  <text class="sub" x="284" y="248">Clean labelled tables</text>
+  <text class="sub" x="284" y="264">(ground-truth breaches)</text>
+
+  <!-- Stage 3: Predictive Engine -->
+  <rect class="box" x="492" y="140" width="210" height="140" rx="10" stroke="#16a34a"/>
+  <text class="phase" x="508" y="162" fill="#16a34a">PHASE 3 — core</text>
+  <text class="title" x="508" y="184">Predictive Engine</text>
+  <text class="sub" x="508" y="206">Anomaly baseline</text>
+  <text class="sub" x="508" y="222">Trend / multi-step forecast</text>
+  <text class="sub" x="508" y="238">Time-to-impact regressor</text>
+  <text class="sub" x="508" y="254">Graph propagation (cascades)</text>
+  <text class="sub" x="508" y="272" font-weight="700" fill="#16a34a">→ outputs LEAD TIME</text>
+
+  <!-- Stage 4: Offline LLM + RAG -->
+  <rect class="box" x="736" y="150" width="200" height="120" rx="10"/>
+  <text class="phase" x="752" y="172">PHASE 4–5</text>
+  <text class="title" x="752" y="194">Offline Copilot</text>
+  <text class="sub" x="752" y="216">Local LLM (Ollama, quantized)</text>
+  <text class="sub" x="752" y="232">Local RAG (FAISS + runbooks)</text>
+  <text class="sub" x="752" y="248">Structured JSON + citations</text>
+  <text class="sub" x="752" y="264">(anti-hallucination)</text>
+
+  <!-- Stage 6: UI -->
+  <rect class="box" x="970" y="150" width="166" height="120" rx="10"/>
+  <text class="phase" x="986" y="172">PHASE 6</text>
+  <text class="title" x="986" y="194">Operator UI</text>
+  <text class="sub" x="986" y="216">Topology + risk timeline</text>
+  <text class="sub" x="986" y="232">Alert queue (by conf.)</text>
+  <text class="sub" x="986" y="248">Copilot chat (NL query)</text>
+
+  <!-- Flow arrows -->
+  <path class="flow" d="M234,210 L266,210"/>
+  <path class="flow" d="M458,210 L490,210"/>
+  <path class="pred" d="M702,210 L734,210"/>
+  <path class="flow" d="M936,210 L968,210"/>
+
+  <!-- Predict -> explain callout -->
+  <rect x="492" y="320" width="444" height="120" rx="10" fill="#ecfdf5" stroke="#16a34a" stroke-width="2"/>
+  <text x="512" y="346" font-size="14" font-weight="800" fill="#166534">The predict → explain loop (what the demo shows)</text>
+  <text class="sub" x="512" y="370">1. Risk rises as precursors trend up  →  flag raised BEFORE SLA breach</text>
+  <text class="sub" x="512" y="390">2. Measured LEAD TIME = breach step − flag step  (the headline metric)</text>
+  <text class="sub" x="512" y="410">3. Copilot emits a grounded, cited remediation card (predicted issue,</text>
+  <text class="sub" x="512" y="426">   confidence, root cause, time-to-impact, recommended actions, citation)</text>
+
+  <path class="pred" d="M597,280 L597,318"/>
+  <path class="pred" d="M820,270 C820,300 760,300 730,318"/>
+
+  <!-- Knowledge base -->
+  <rect class="box" x="736" y="300" width="200" height="40" rx="8" fill="#fff7ed" stroke="#ea580c"/>
+  <text class="sub" x="752" y="325" fill="#9a3412" font-weight="700">Local KB: runbooks, RFCs, past incidents</text>
+  <path class="flow" d="M836,300 L836,272" stroke="#ea580c"/>
+</svg>

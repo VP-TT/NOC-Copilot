@@ -1,0 +1,56 @@
+{
+  "runbooks": [
+    {
+      "id": "RB-CONGESTION-01",
+      "title": "Hub-Spoke Link Congestion Mitigation",
+      "applies_to": ["link_utilization", "jitter", "packet_loss"],
+      "symptoms": "Sustained rise in hub-facing link utilization (>85%) with upward jitter trend; precedes loss-based SLA breach on spoke tunnels.",
+      "root_cause": "Aggregate spoke traffic exceeding hub uplink capacity during peak windows; no per-spoke shaping.",
+      "recommended_actions": [
+        "Apply QoS shaping / LLQ on the hub uplink to protect priority classes.",
+        "Temporarily re-home one high-volume spoke to the secondary hub.",
+        "Raise hub uplink committed rate or enable burst allowance if contracted."
+      ],
+      "source": "NOC Runbook v3.2, sec. 4.1 (Hub Congestion)"
+    },
+    {
+      "id": "RB-BGP-FLAP-02",
+      "title": "BGP Session Flap & Reroute Cascade",
+      "applies_to": ["bgp_flap_count", "latency"],
+      "symptoms": "Increasing BGP flap frequency on a PE-CE session; rising path churn and latency on rerouted prefixes.",
+      "root_cause": "Unstable PE-CE adjacency (link errors or holdtime expiry) triggering repeated best-path recomputation.",
+      "recommended_actions": [
+        "Enable BGP dampening on the affected neighbor to suppress churn.",
+        "Inspect physical/optical errors on the PE-CE link; replace if CRC errors climbing.",
+        "Pin critical prefixes via a stable backup path until adjacency stabilizes."
+      ],
+      "source": "NOC Runbook v3.2, sec. 5.3 (Routing Instability)"
+    },
+    {
+      "id": "RB-MPLS-UNDERLAY-03",
+      "title": "Intermittent MPLS Underlay Loss",
+      "applies_to": ["packet_loss", "latency", "jitter"],
+      "symptoms": "Intermittent packet loss bursts on an LSP with stable utilization; tunnel keepalive jitter rising.",
+      "root_cause": "Flaky underlay segment (P-router or transport) causing transient LSP path degradation.",
+      "recommended_actions": [
+        "Trigger LSP fast-reroute / switch to backup path.",
+        "Run targeted MPLS LSP ping/traceroute to localize the lossy hop.",
+        "Open transport ticket for the suspect underlay segment."
+      ],
+      "source": "NOC Runbook v3.2, sec. 6.2 (MPLS Underlay)"
+    },
+    {
+      "id": "RB-POLICY-DRIFT-04",
+      "title": "Controller Misconfiguration / Policy Drift",
+      "applies_to": ["link_utilization", "latency"],
+      "symptoms": "Traffic shifts and latency change following a controller push; metrics diverge from intended policy baseline.",
+      "root_cause": "SDN controller pushed a policy that diverged from the validated intent (mis-scoped path or class map).",
+      "recommended_actions": [
+        "Diff running policy against the last-known-good intent snapshot.",
+        "Roll back the offending controller push.",
+        "Re-validate path/class assignments before re-applying."
+      ],
+      "source": "NOC Runbook v3.2, sec. 7.4 (Intent Validation)"
+    }
+  ]
+}

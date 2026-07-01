@@ -1,0 +1,20 @@
+{
+  "predicted_issue": "Hub-Spoke Link Congestion Mitigation",
+  "confidence": 0.75,
+  "root_cause_hypothesis": "Aggregate spoke traffic exceeding hub uplink capacity during peak windows; no per-spoke shaping.",
+  "affected_sites": [
+    "BR-07 (spoke) <-> HUB-1"
+  ],
+  "detected_at_step": 86,
+  "sla_breach_step": 107,
+  "time_to_impact_steps": 23,
+  "lead_time_steps": 21,
+  "evidence": "Sustained rise in hub-facing link utilization (>85%) with upward jitter trend; precedes loss-based SLA breach on spoke tunnels.",
+  "recommended_actions": [
+    "Apply QoS shaping / LLQ on the hub uplink to protect priority classes.",
+    "Temporarily re-home one high-volume spoke to the secondary hub.",
+    "Raise hub uplink committed rate or enable burst allowance if contracted."
+  ],
+  "citation": "RB-CONGESTION-01 -- NOC Runbook v3.2, sec. 4.1 (Hub Congestion)",
+  "grounded": true
+}
