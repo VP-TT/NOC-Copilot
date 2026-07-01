@@ -30,17 +30,9 @@ non-negotiable for sensitive/air-gapped environments.
 
 ## 🎬 Demo Video
 
-> **▶️ Replace this with your recording.** On GitHub, open the README editor and **drag-and-drop your
-> `.mp4`** here — GitHub hosts it and embeds a player automatically. Or link a YouTube video:
 
-<p align="center">
-  <!-- Option A (drag-drop mp4): paste the generated https://github.com/user-attachments/assets/... link here -->
-  <!-- Option B (YouTube thumbnail link): -->
-  <a href="https://youtu.be/YOUR_VIDEO_ID">
-    <img src="deck/assets/dashboard_hero.png" width="80%" alt="Watch the demo"><br>
-    <b>► Watch the 90-second demo</b>
-  </a>
-</p>
+**Youtube LINK to view Demo** - https://youtu.be/O8VrDtAuETs
+
 
 **What the video shows:** press **Play** → watch risk climb as the network degrades → the at-risk path
 lights up and the **risk flag fires before the SLA breach** → the copilot emits a **grounded, cited**
@@ -228,13 +220,6 @@ monitor showing **zero outbound connections** during a full predict → explain 
 
 ## 👥 Team
 
-**Team:** «Your Team Name» · **Members:** «names / colleges»
+**Team:** TechXCoders · **College:** Keshav Memorial Institute of Technology
+**Team Leader:** Vishnu Priya Taduka
 Built for **ISRO Bhartiya Antariksh Hackathon (BAH) 2026**.
-
-## 🙏 Acknowledgements
-
-ISRO & Hack2Skill for the BAH 2026 problem statement and template.
-
-## 📄 License
-
-«Choose a license — e.g. MIT» — add a `LICENSE` file before publishing.
