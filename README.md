@@ -1,72 +1,240 @@
-# Offline Predictive Network Copilot — Round-One Demo
+<h1 align="center">🛰️ NOC Copilot</h1>
+<p align="center"><b>An offline, predictive network operations copilot — forecast degradation <i>before</i> the SLA breaks, and explain it with a grounded, cited AI assistant.</b></p>
 
-**Forecast, don't just detect.** A fully-offline vertical slice that predicts a network SLA
-breach *before* it happens, measures the **lead time**, and emits a **grounded, cited**
-remediation card — the core "predict → explain" loop of the full project.
+<p align="center">
+  <img alt="Python" src="https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white">
+  <img alt="Streamlit" src="https://img.shields.io/badge/UI-Streamlit-FF4B4B?logo=streamlit&logoColor=white">
+  <img alt="Offline" src="https://img.shields.io/badge/Runs-100%25%20Offline-22c55e">
+  <img alt="Air-gapped" src="https://img.shields.io/badge/Air--gapped-0%20egress-ef4444">
+  <img alt="Event" src="https://img.shields.io/badge/ISRO-BAH%202026-ff7a1a">
+</p>
 
-This is intentionally a thin slice: no emulator, no model download, pure Python. But it is
-**not throwaway** — the synthetic generator and the swappable copilot interface are the
-day-one seed of the full build's ML and LLM tracks.
+<p align="center"><i>“Forecast, don't just detect.”</i></p>
 
-## What it does
+---
 
-1. **Generates** synthetic network telemetry with a *gradual* precursor fault
-   (progressive hub-spoke congestion) plus a ground-truth SLA-breach label.
-2. **Predicts** risk from the leading indicator (learned baseline + trend gate), raises a
-   sustained "risk rising" flag, and computes **lead time = breach step − flag step**.
-3. **Explains** the prediction as a structured JSON copilot card grounded in a local runbook,
-   with a **citation** (no model, no network — template now, LLM-swappable later).
+## 📖 Overview
 
-## Run it
+Mission-critical, air-gapped WANs (MPLS + IPSec overlays) fail in ways that **cascade** — a
+congested hub, a flapping BGP session — and today's NOC tooling only **alerts after the SLA is
+already breached**. That's reactive: operators clean up, they don't pre-empt.
+
+**NOC Copilot** turns live telemetry into a **rising risk score with measurable lead time**, then
+hands the operator a **structured, cited remediation card** — all running **100% offline**, which is
+non-negotiable for sensitive/air-gapped environments.
+
+> Built for the **ISRO Bhartiya Antariksh Hackathon (BAH) 2026** — round-one idea submission.
+> This repository is a **working vertical slice**: real engine, real dashboard, real numbers.
+
+---
+
+## 🎬 Demo Video
+
+> **▶️ Replace this with your recording.** On GitHub, open the README editor and **drag-and-drop your
+> `.mp4`** here — GitHub hosts it and embeds a player automatically. Or link a YouTube video:
+
+<p align="center">
+  <!-- Option A (drag-drop mp4): paste the generated https://github.com/user-attachments/assets/... link here -->
+  <!-- Option B (YouTube thumbnail link): -->
+  <a href="https://youtu.be/YOUR_VIDEO_ID">
+    <img src="deck/assets/dashboard_hero.png" width="80%" alt="Watch the demo"><br>
+    <b>► Watch the 90-second demo</b>
+  </a>
+</p>
+
+**What the video shows:** press **Play** → watch risk climb as the network degrades → the at-risk path
+lights up and the **risk flag fires before the SLA breach** → the copilot emits a **grounded, cited**
+remediation card → ask it a question in plain English.
+
+---
+
+## ✨ Why it stands out
+
+| | |
+|---|---|
+| ⏱️ **Lead time, not detection** | We measure *how many steps before the SLA breach* we raise the flag. That's the whole point — time to intervene. |
+| 🔒 **Air-gapped & grounded** | Local retrieval over runbooks; every recommendation is a **structured JSON card with a citation** using a **cite-or-abstain** rule (never fabricates a source). |
+| 🧩 **Interpretable now, upgradeable later** | Transparent baseline+trend risk model today; swaps to an LSTM / Temporal-CNN forecaster + graph cascade layer behind the **same interfaces**. |
+| 📊 **Measured, not hand-wavy** | Precision / recall / false-positive-rate **and lead time**, per scenario, shown on-screen. |
+| 🖥️ **It actually runs** | A real Streamlit operator console with animated playback — not a mockup. |
+
+---
+
+## 🚀 Features
+
+- **Risk timeline** — forecasts the breach and marks the flag, the breach, and the lead-time window.
+- **Network topology** — the degrading MPLS/IPSec path glows green → red as risk climbs.
+- **KPI tiles + risk gauge** — health, status, **lead time**, time-to-impact, confidence.
+- **Grounded copilot card** — predicted issue, root cause, recommended actions, **citation**, cite-or-abstain.
+- **Natural-language chat** — “why is this segment at risk?”, “what should I do?” — answers stay grounded.
+- **Evaluation panel** — precision / recall / FPR per scenario + a **reactive-vs-predictive** comparison.
+- **Trust & air-gap panel** — retrieved-context (RAG) transparency, a **0-egress monitor**, incident log, and a downloadable incident report.
+- **Four fault scenarios** with animated time playback.
+
+---
+
+## 🖼️ Screenshots
+
+<p align="center">
+  <img src="deck/assets/dashboard_hero.png" width="90%" alt="Operator dashboard"><br>
+  <sub><b>Operator console</b> — KPIs, at-risk topology, risk gauge, and forecast timeline.</sub>
+</p>
+
+<p align="center">
+  <img src="deck/assets/dashboard_copilot.png" width="90%" alt="Grounded copilot"><br>
+  <sub><b>Grounded copilot</b> — cited remediation card + natural-language chat, network-wide predictions.</sub>
+</p>
+
+---
+
+## 🏗️ Architecture
+
+<p align="center">
+  <img src="deck/assets/architecture.png" width="92%" alt="Architecture">
+</p>
+
+Everything runs **inside the air-gap boundary — zero outbound traffic**:
+
+`Network sim → Telemetry → Predictive engine → Offline copilot (LLM + local RAG) → Operator UI`
+
+---
+
+## ⚙️ How it works
+
+### Prediction
+1. **Learn** a healthy baseline from an initial calibration window.
+2. **Score risk** = how far the leading indicator has travelled toward *critical*, **gated by a
+   confirmed upward trend** (so a stable-but-high link doesn't false-alarm).
+3. **Debounce** — require a sustained crossing → no flapping alerts.
+4. **Project time-to-impact** from the leading indicator's trajectory.
+
+<p align="center">
+  <img src="deck/assets/precursor_signature.png" width="80%" alt="Precursor signature"><br>
+  <sub>Precursors (utilization, jitter) trend up <b>before</b> the SLA metric breaches — that's what makes lead time possible.</sub>
+</p>
+
+### The copilot (anti-hallucination by design)
+Prediction fires → **retrieve local runbook context** → emit a **structured JSON card**
+(issue · confidence · root cause · affected sites · time-to-impact · recommended actions · **citation**).
+If nothing is retrieved, it **abstains** rather than inventing a source.
+
+> **Honest status:** the demo copilot is **template-backed** over a local runbook KB (no model
+> download, runs anywhere). It's built behind a `generate_card()` interface so a **local quantized
+> LLM (Ollama)** drops in for the full build *without changing the schema*.
+
+---
+
+## 📈 Results (reproducible, seed-fixed)
+
+<p align="center">
+  <img src="deck/assets/reactive_vs_predictive.png" width="80%" alt="Reactive vs predictive">
+</p>
+
+| Scenario | Leading signal | Lead time | Precision | FPR |
+|---|---|:--:|:--:|:--:|
+| Progressive hub-spoke congestion | link utilization | **21 steps** | 1.0 | 0.0 |
+| BGP flap → reroute cascade | BGP flap rate | **27 steps** | 1.0 | 0.0 |
+| Intermittent MPLS underlay loss | tunnel jitter | **17 steps** | 1.0 | 0.0 |
+| Controller misconfig → policy drift | link utilization | **23 steps** | 1.0 | 0.0 |
+
+Recall is **0.37–0.56** *by design* — the earliest fault steps carry no signal yet; what matters is
+**early, false-alarm-free** detection (precision 1.0, FPR 0.0). Confidence climbs from ~75% at the
+flag to ~99% at the breach.
+
+---
+
+## 🛠️ Tech stack
+
+**Built now (this offline slice):** Python · NumPy · pandas · scikit-learn-free (pure numpy/pandas
+model) · Streamlit · Plotly · Matplotlib. Runs on a modest laptop, **no network calls**.
+
+**Full build / roadmap (air-gapped):** Containerlab + FRRouting (MPLS/LDP/SR, BGP, OSPF, VRFs, IPSec)
+· Telegraf + InfluxDB/Prometheus + syslog/NetFlow · PyTorch (LSTM / Temporal-CNN) + graph layer ·
+Ollama + a quantized 7–8B model (Phi-3-mini / Qwen2.5-7B / Llama-3.1-8B) · FAISS/Chroma + bge/MiniLM
+embeddings.
+
+---
+
+## ⚡ Getting started
+
+> Prerequisites: **Python 3.10+**. Everything installs from PyPI; the demo needs no GPU and no network at runtime.
 
 ```bash
-pip install -r requirements.txt      # numpy, pandas, matplotlib  (offline-installable)
-python src/run_demo.py               # from the project root
+# from the repository root
+pip install -r requirements.txt
+
+# 1) Interactive dashboard (the thing to demo / record)
+streamlit run src/app.py         # opens http://localhost:8501
+
+# 2) Headless run — writes chart + card + csv, prints the lead-time headline
+python src/run_demo.py
 ```
 
-Outputs (written to `outputs/`):
-- `telemetry.csv` — full risk-augmented time series
-- `risk_timeline.png` — the money chart: risk flag clearly **before** the SLA breach
-- `copilot_card.json` — structured, cited remediation card
+Headless outputs land in `outputs/`: `telemetry.csv`, `risk_timeline.png`, `copilot_card.json`.
 
-Example headline (reproducible, seed-fixed):
-> Risk flag at step 86 · SLA breach at step 107 · **LEAD TIME = 21 steps** ·
-> predicted time-to-impact 23 steps · card cited to `RB-CONGESTION-01`.
+Example headline:
 
-## Recording the demo (60–90s)
+```
+Risk flag at step 86 · SLA breach at step 107 · LEAD TIME = 21 steps
+predicted time-to-impact 23 steps · card cited to RB-CONGESTION-01
+```
 
-1. Clear the terminal, run `python src/run_demo.py` — let the **LEAD TIME** line land.
-2. Open `outputs/risk_timeline.png` — point at the green flag line vs the red breach line.
-3. Open `outputs/copilot_card.json` — highlight `grounded: true` and the `citation`.
-That clip + the chart are slides 10 of `PPT_OUTLINE.md`.
+---
 
-## Layout
+## 📂 Project structure
 
 ```
 netcopilot-demo/
-  data/runbooks.json          # local grounding KB (the "RAG" corpus)
-  src/generate_telemetry.py   # synthetic series + ramped precursor fault + ground truth
-  src/predict.py              # baseline+trend risk model, lead-time + time-to-impact
-  src/copilot.py              # generate_card(): structured, cited card (LLM-swappable)
-  src/run_demo.py             # generate -> predict -> explain -> chart
-  architecture.svg            # editable architecture diagram for the deck
-  PPT_OUTLINE.md              # slide-by-slide proposal content
+├── src/
+│   ├── generate_telemetry.py   # scenarios, topology, gradual precursor faults + ground truth
+│   ├── predict.py              # baseline+trend risk model, lead time, time-to-impact, evaluate()
+│   ├── copilot.py              # grounded/cited card, cite-or-abstain, NL chat, incident report
+│   ├── run_demo.py             # headless CLI
+│   └── app.py                  # Streamlit operator dashboard
+├── data/runbooks.json          # local RAG corpus (the grounding knowledge base)
+├── outputs/                    # generated artifacts (chart, card, csv)
+├── deck/
+│   ├── make_assets.py          # regenerate all deck visuals
+│   ├── build_deck.py           # build the submission PPTX on the official template
+│   ├── slide_specs.json        # slide copy
+│   └── assets/                 # diagrams + dashboard screenshots
+├── requirements.txt
+└── README.md
 ```
 
-## How this grows into the full project
+---
 
-| Slice today | Full build (post-shortlist) |
-|---|---|
-| Synthetic telemetry | Containerlab + FRR emulator → real telemetry (same schema) |
-| Baseline + trend detector | LSTM / Temporal-CNN forecaster + time-to-impact regressor + graph cascade layer |
-| `generate_card()` template | Same interface backed by Ollama + quantized LLM + FAISS RAG |
-| One scenario | All four required scenarios |
-| Matplotlib chart | Streamlit operator UI (topology, alert queue, copilot chat) |
+## 🔒 Offline / air-gap guarantee
 
-The interfaces (`telemetry → predict → card`) are stable, so each upgrade is a swap, not a rewrite.
+The demo makes **zero network calls at runtime** — model logic and runbook retrieval are entirely
+local. The full build preserves this (local LLM + local vector index) and proves it with a packet
+monitor showing **zero outbound connections** during a full predict → explain cycle.
 
-## Offline / air-gap note
+---
 
-Round one runs with **zero network calls** — no model download, no API. The full build keeps
-this property (local LLM + local vector index) and proves it with a packet monitor showing
-zero outbound during a predict→explain cycle.
+## 🗺️ Roadmap
+
+- [x] Synthetic telemetry with gradual precursor faults + ground-truth labels
+- [x] Interpretable baseline+trend predictor with **lead time** + time-to-impact
+- [x] Grounded, cited copilot (cite-or-abstain) + NL chat
+- [x] Streamlit operator console (topology, gauge, timeline, evaluation, air-gap monitor)
+- [x] Four fault scenarios + evaluation metrics
+- [ ] Real emulated network (Containerlab + FRRouting) → live telemetry
+- [ ] LSTM / Temporal-CNN forecaster + graph cascade propagation
+- [ ] Local LLM (Ollama) + FAISS RAG behind the existing copilot interface
+- [ ] Packet-monitor air-gap proof
+
+---
+
+## 👥 Team
+
+**Team:** «Your Team Name» · **Members:** «names / colleges»
+Built for **ISRO Bhartiya Antariksh Hackathon (BAH) 2026**.
+
+## 🙏 Acknowledgements
+
+ISRO & Hack2Skill for the BAH 2026 problem statement and template.
+
+## 📄 License
+
+«Choose a license — e.g. MIT» — add a `LICENSE` file before publishing.
