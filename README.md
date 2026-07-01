@@ -67,27 +67,14 @@ remediation card → ask it a question in plain English.
 
 ## 🖼️ Screenshots
 
-<p align="center">
-  <img src="deck/assets/dashboard_hero.png" width="90%" alt="Operator dashboard"><br>
-  <sub><b>Operator console</b> — KPIs, at-risk topology, risk gauge, and forecast timeline.</sub>
-</p>
+<img width="3200" height="2160" alt="dashboard_hero" src="https://github.com/user-attachments/assets/32904ac7-4006-4346-85be-c9a429761031" />
 
-<p align="center">
-  <img src="deck/assets/dashboard_copilot.png" width="90%" alt="Grounded copilot"><br>
-  <sub><b>Grounded copilot</b> — cited remediation card + natural-language chat, network-wide predictions.</sub>
-</p>
+<img width="3200" height="2160" alt="dashboard_eval" src="https://github.com/user-attachments/assets/483e339d-1db0-4a55-86e8-bd95a20b26e3" />
 
----
+<img width="3200" height="2160" alt="dashboard_copilot" src="https://github.com/user-attachments/assets/00bbeb3d-8b10-4fa3-ac15-801bc95b651b" />
 
-## 🏗️ Architecture
 
-<p align="center">
-  <img src="deck/assets/architecture.png" width="92%" alt="Architecture">
-</p>
 
-Everything runs **inside the air-gap boundary — zero outbound traffic**:
-
-`Network sim → Telemetry → Predictive engine → Offline copilot (LLM + local RAG) → Operator UI`
 
 ---
 
@@ -100,8 +87,8 @@ Everything runs **inside the air-gap boundary — zero outbound traffic**:
 3. **Debounce** — require a sustained crossing → no flapping alerts.
 4. **Project time-to-impact** from the leading indicator's trajectory.
 
-<p align="center">
-  <img src="deck/assets/precursor_signature.png" width="80%" alt="Precursor signature"><br>
+<img width="2031" height="802" alt="reactive_vs_predictive" src="https://github.com/user-attachments/assets/cdd3f073-4746-4a0d-aabf-93d558b2054f" />
+
   <sub>Precursors (utilization, jitter) trend up <b>before</b> the SLA metric breaches — that's what makes lead time possible.</sub>
 </p>
 
@@ -118,9 +105,6 @@ If nothing is retrieved, it **abstains** rather than inventing a source.
 
 ## 📈 Results (reproducible, seed-fixed)
 
-<p align="center">
-  <img src="deck/assets/reactive_vs_predictive.png" width="80%" alt="Reactive vs predictive">
-</p>
 
 | Scenario | Leading signal | Lead time | Precision | FPR |
 |---|---|:--:|:--:|:--:|
